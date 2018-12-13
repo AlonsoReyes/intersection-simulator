@@ -1,26 +1,26 @@
-package carmdl
+package car
 
 import (
 	"fmt"
 	"math"
-
+	dyn "github.com/AlonsoReyes/intersection-simulator/vehicle/dynamics"
 )
 
 type Car struct {
-	Pos                            Pos
+	Position                            dyn.Pos
 	Intention, Lane                int // Left = 0, Right = 1
 	Direction, Acceleration, Speed float64
 }
 
 func CreateCar(x, y, speed float64, intention, lane int) *Car {
-	pos := Pos{x, y}
-	car := Car{Pos: pos, Intention: intention, Lane: lane, Speed: speed}
+	pos := dyn.Pos{x, y}
+	car := Car{Position: pos, Intention: intention, Lane: lane, Speed: speed}
 	return &car
 }
 
 func (car *Car) PrintCar() {
-	fmt.Println(car.Pos.X)
-	fmt.Println(car.Pos.Y)
+	fmt.Println(car.Position.X)
+	fmt.Println(car.Position.Y)
 	fmt.Println(car.Intention)
 	fmt.Println(car.Lane)
 	fmt.Println(car.Direction)
@@ -29,7 +29,7 @@ func (car *Car) PrintCar() {
 }
 
 func (car *Car) GetPosition() (float64, float64){
-	return car.Pos.X, car.Pos.Y
+	return car.Position.X, car.Position.Y
 }
 
 func (car *Car) Move(dt float64) {

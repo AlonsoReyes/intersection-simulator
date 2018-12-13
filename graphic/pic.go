@@ -10,8 +10,8 @@ import (
 func SpriteSize(pd *pixel.Sprite) (float64, float64) {
 	b := pd.Frame()
 	width := b.W()
-	heigth := b.H()
-	return float64(width), float64(heigth)
+	height := b.H()
+	return float64(width), float64(height)
 }
 
 func LoadPicture(path string) (pixel.Picture, error) {

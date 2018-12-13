@@ -1,7 +1,7 @@
 package carmdl
 
 import (
-	"crashing-cars/graphic"
+	"github.com/AlonsoReyes/intersection-simulator/graphic"
 	"github.com/faiface/pixel"
 	_ "math"
 )
