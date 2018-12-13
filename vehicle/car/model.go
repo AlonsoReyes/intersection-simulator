@@ -42,8 +42,8 @@ func (car *Car) Advance(dt float64) {
 	rad := car.Direction * (math.Pi / 180)
 	posXDiff := math.Sin(rad) * car.Speed * dt // delta time
 	posYDiff := math.Cos(rad) * car.Speed * dt
-	car.Pos.X += posXDiff
-	car.Pos.Y += posYDiff
+	car.Position.X += posXDiff
+	car.Position.Y += posYDiff
 }
 
 func (car *Car) Accelerate(dt float64) {
