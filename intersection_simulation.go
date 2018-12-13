@@ -9,8 +9,6 @@ import (
 
 	_ "image/png"
 
-	"crashing-cars/carmdl"
-	"crashing-cars/graphic"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
 )
