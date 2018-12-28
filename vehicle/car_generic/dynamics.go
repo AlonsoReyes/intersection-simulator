@@ -19,8 +19,8 @@ func (car *Car) Run(dt float64) {
 
 func (car *Car) Forward(dt float64) {
 	rad := car.Direction * (math.Pi / 180)
-	posXDiff := math.Sin(rad) * car.Speed * dt // delta time
-	posYDiff := math.Cos(rad) * car.Speed * dt
+	posXDiff := math.Cos(rad) * car.Speed * dt // delta time
+	posYDiff := math.Sin(rad) * car.Speed * dt
 	car.Position.X += posXDiff
 	car.Position.Y += posYDiff
 }
@@ -49,13 +49,13 @@ func (car *Car) ChangeDirection(dt, turnAngle float64) {
 	if car.Direction < 0 {
 		car.Direction = 360 + car.Direction
 	} else {
-		car.Direction =   math.Mod(car.Direction, 360)
+		car.Direction = math.Mod(car.Direction, 360)
 	}
 }
 
 func checkTurnCondition(car *Car) bool {
-	A, B, C, D := GetDangerZoneCoords(car.DangerZoneLength, car.CoopZoneLength)
 	if car.Intention != StraightIntention {
+		A, B, C, D := GetDangerZoneCoords(car.DangerZoneLength, car.CoopZoneLength)
 		return IsInsideDangerZone(A, B, C, D, car.Position)
 	}
 	return false
@@ -67,6 +67,7 @@ func (car *Car) Turn(dt, turnAngle  float64) {
 	// Check if its in position to turn or not
 	// check intention
 	if checkTurnCondition(car) {
+		//fmt.Println("qeeee")
 		car.ChangeDirection(dt, turnAngle)
 	}
 }

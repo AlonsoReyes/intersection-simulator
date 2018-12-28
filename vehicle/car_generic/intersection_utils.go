@@ -1,8 +1,8 @@
 package car_generic
 
 import (
+	"fmt"
 	m "github.com/AlonsoReyes/intersection-simulator/vehicle"
-
 )
 
 func GetTurnAngle() float64 {
@@ -58,7 +58,9 @@ func GetStartPosition(lane int, coopZoneLength, dangerZoneLength float64) m.Pos 
 		x = 0
 		y = 0
 	}
-	return m.Pos{ X: x, Y: y }
+	res := m.Pos{X: x, Y: y}
+
+	return res
 }
 
 
@@ -72,6 +74,7 @@ func GetStartPosition(lane int, coopZoneLength, dangerZoneLength float64) m.Pos 
  */
 
 func IsInsideDangerZone(A, B, C, D, M m.Pos) bool {
+	fmt.Println(A, B, C, D, M)
 	am := A.ScalarProduct(M)
 	ab := A.ScalarProduct(B)
 	ad := A.ScalarProduct(D)
@@ -85,7 +88,8 @@ func IsInsideDangerZone(A, B, C, D, M m.Pos) bool {
 	D		C
 */
 
-func GetDangerZoneCoords(dangerZoneLength, coopZoneLength float64) (A, B, C, D m.Pos){
+func GetDangerZoneCoords(dangerZoneLength, coopZoneLength float64) (m.Pos, m.Pos, m.Pos, m.Pos) {
+	var A, B, C, D m.Pos
 	laneWidth := dangerZoneLength / 2
 	halfCoopZone := coopZoneLength / 2
 

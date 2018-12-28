@@ -2,6 +2,6 @@ package fourway
 
 
 const (
-	PictureLength = 222.0 // pixels
-	IntersectionLength = 74.0 // px
+	PictureLength = 600.0 // pixels
+	IntersectionLength = 200.0 // px
 )

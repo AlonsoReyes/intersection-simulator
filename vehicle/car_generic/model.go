@@ -36,7 +36,8 @@ type Car struct {
 	DangerZoneLength    float64 // Inner intersection, if it is a square Height == Width, in the image used its 1/3 of the whole pic
 }
 
-func CreateCar(lane, intention int, coopZoneLength, dangerZoneLength float64) (c *Car) {
+func CreateCar(lane, intention int, coopZoneLength, dangerZoneLength float64) *Car {
+	var c Car
 	c.Position = GetStartPosition(lane, coopZoneLength, dangerZoneLength)
 	c.Intention = intention
 	c.Lane = lane
@@ -45,6 +46,5 @@ func CreateCar(lane, intention int, coopZoneLength, dangerZoneLength float64) (c
 	c.Speed = 0
 	c.CoopZoneLength = coopZoneLength
 	c.DangerZoneLength = dangerZoneLength
-
-	return c
+	return &c
 }
