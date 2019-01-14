@@ -1,13 +1,21 @@
 package vehicle
 
-
+import "math"
 
 type Pos struct {
 	X, Y float64
 }
 
+func (p *Pos) GetVectorLength(v Pos) float64 {
+	return math.Sqrt(math.Pow(v.X-p.X, 2) + math.Pow(v.Y-p.Y, 2))
+}
+
+func (p *Pos) GetVector(v Pos) Pos {
+	return Pos{v.X - p.X, v.Y - p.Y}
+}
+
 func (p *Pos) ScalarProduct(v Pos) float64 {
-	return p.X * v.X + p.Y * v.Y
+	return p.X*v.X + p.Y*v.Y
 }
 
 type Vehicle interface {
@@ -15,5 +23,5 @@ type Vehicle interface {
 	Run(dt float64)
 	Forward(dt float64)
 	Accelerate(dt float64)
-	ChangeDirection(dt,turnAngle float64)
+	ChangeDirection(dt, turnAngle float64)
 }

@@ -1,7 +1,6 @@
 package car_generic
 
 import (
-	"fmt"
 	m "github.com/AlonsoReyes/intersection-simulator/vehicle"
 )
 
@@ -12,9 +11,9 @@ func GetTurnAngle() float64 {
 func GetTurnRadius(intention int, dangerZoneLength float64) float64 {
 	var radius float64
 	if intention == LeftIntention {
-		radius = dangerZoneLength * (3 / 4)
+		radius = dangerZoneLength * (3.0 / 4.0)
 	} else if intention == RightIntention {
-		radius = dangerZoneLength / 4
+		radius = dangerZoneLength / 4.0
 	} else {
 		radius = 0.0
 	}
@@ -37,23 +36,22 @@ func GetStartDirection(lane int) (dir float64) {
 	return dir
 }
 
-
 func GetStartPosition(lane int, coopZoneLength, dangerZoneLength float64) m.Pos {
 	var x, y float64
 	laneWidth := dangerZoneLength / 2.0
 	switch lane {
 	case BottomLane:
-		x = (coopZoneLength + laneWidth) / 2
+		x = (coopZoneLength + laneWidth) / 2.0
 		y = 0
 	case RightLane:
 		x = coopZoneLength
-		y = (coopZoneLength + laneWidth) / 2
+		y = (coopZoneLength + laneWidth) / 2.0
 	case TopLane:
-		x = (coopZoneLength - laneWidth) / 2
+		x = (coopZoneLength - laneWidth) / 2.0
 		y = coopZoneLength
 	case LeftLane:
 		x = 0
-		y = (coopZoneLength - laneWidth) / 2
+		y = (coopZoneLength - laneWidth) / 2.0
 	default:
 		x = 0
 		y = 0
@@ -63,6 +61,89 @@ func GetStartPosition(lane int, coopZoneLength, dangerZoneLength float64) m.Pos 
 	return res
 }
 
+func GetEnterPosition(lane int, coopZoneLength, dangerZoneLength float64) m.Pos {
+	var x, y float64
+	laneWidth := dangerZoneLength / 2.0
+	switch lane {
+	case BottomLane:
+		x = (coopZoneLength + laneWidth) / 2.0
+		y = (coopZoneLength - dangerZoneLength) / 2.0
+	case TopLane:
+		x = (coopZoneLength - laneWidth) / 2.0
+		y = (coopZoneLength + dangerZoneLength) / 2.0
+	case LeftLane:
+		x = (coopZoneLength - dangerZoneLength) / 2.0
+		y = (coopZoneLength + laneWidth) / 2.0
+	case RightLane:
+		x = (coopZoneLength + dangerZoneLength) / 2.0
+		y = (coopZoneLength - laneWidth) / 2.0
+	default:
+		x = 0.0
+		y = 0.0
+	}
+	res := m.Pos{X: x, Y: y}
+
+	return res
+}
+
+// TODO FIX
+
+func GetEndPosition(lane, intention int, coopZoneLength, dangerZoneLength float64) m.Pos {
+	var x, y float64
+	laneWidth := dangerZoneLength / 2.0
+	switch lane {
+	case BottomLane:
+		if intention == LeftIntention {
+			x = (coopZoneLength - dangerZoneLength) / 2.0
+			y = (coopZoneLength + laneWidth) / 2.0
+		} else if intention == RightIntention {
+			x = (coopZoneLength + dangerZoneLength) / 2.0
+			y = (coopZoneLength - laneWidth) / 2.0
+		} else {
+			x = (coopZoneLength + laneWidth) / 2.0
+			y = (coopZoneLength + dangerZoneLength) / 2.0
+		}
+	case TopLane:
+		if intention == LeftIntention {
+			x = (coopZoneLength + dangerZoneLength) / 2.0
+			y = (coopZoneLength - dangerZoneLength) / 2.0
+		} else if intention == RightIntention {
+			x = (coopZoneLength - dangerZoneLength) / 2.0
+			y = (coopZoneLength + laneWidth) / 2.0
+		} else {
+			x = (coopZoneLength - laneWidth) / 2.0
+			y = (coopZoneLength - dangerZoneLength) / 2.0
+		}
+	case LeftLane:
+		if intention == LeftIntention {
+			x = (coopZoneLength + laneWidth) / 2.0
+			y = (coopZoneLength + dangerZoneLength) / 2.0
+		} else if intention == RightIntention {
+			x = (coopZoneLength - laneWidth) / 2.0
+			y = (coopZoneLength - dangerZoneLength) / 2.0
+		} else {
+			x = (coopZoneLength + dangerZoneLength) / 2.0
+			y = (coopZoneLength - dangerZoneLength) / 2.0
+		}
+	case RightLane:
+		if intention == LeftIntention {
+			x = (coopZoneLength - laneWidth) / 2.0
+			y = (coopZoneLength - dangerZoneLength) / 2.0
+		} else if intention == RightIntention {
+			x = (coopZoneLength + laneWidth) / 2.0
+			y = (coopZoneLength + dangerZoneLength) / 2.0
+		} else {
+			x = (coopZoneLength - dangerZoneLength) / 2.0
+			y = (coopZoneLength + laneWidth) / 2.0
+		}
+	default:
+		x = 0.0
+		y = 0.0
+	}
+	res := m.Pos{X: x, Y: y}
+
+	return res
+}
 
 /*
 	A		B
@@ -71,16 +152,18 @@ func GetStartPosition(lane int, coopZoneLength, dangerZoneLength float64) m.Pos 
 
 	Condition
 	(0<AM⋅AB<AB⋅AB)∧(0<AM⋅AD<AD⋅AD)
- */
+*/
 
 func IsInsideDangerZone(A, B, C, D, M m.Pos) bool {
-	fmt.Println(A, B, C, D, M)
-	am := A.ScalarProduct(M)
-	ab := A.ScalarProduct(B)
-	ad := A.ScalarProduct(D)
-	return 0 <  (am * ab) && (am * ab) < (ab * ab) && 0 <  (am * ad) && (am * ad) < (ad * ad)
+	am := A.GetVector(M)
+	ab := A.GetVector(B)
+	ad := A.GetVector(D)
+	AMAD := am.ScalarProduct(ad)
+	AMAB := am.ScalarProduct(ab)
+	ABAB := ab.ScalarProduct(ab)
+	ADAD := ad.ScalarProduct(ad)
+	return 0 < AMAB && AMAB < ABAB && 0 < AMAD && AMAD < ADAD
 }
-
 
 /*
 	A		B
