@@ -1,7 +1,6 @@
 package car_generic
 
 import (
-	"fmt"
 	m "github.com/AlonsoReyes/intersection-simulator/vehicle"
 	"math"
 )
@@ -43,17 +42,13 @@ func (car *Car) ChangeDirection(dt, turnAngle float64) {
 	endPos := GetEndPosition(car.Lane, car.Intention, car.CoopZoneLength, car.DangerZoneLength)
 	curPos := car.GetPosition()
 
-	initDistance := startPos.GetVectorLength(endPos)
-	curDistance := curPos.GetVectorLength(endPos)
-
-	dirChange := turnAngle * (1 - (curDistance / initDistance)) * dt
-	/* after
+	initDistance := startPos.GetManhattanDistance(endPos)
+	curDistance := curPos.GetManhattanDistance(endPos)
 	radio := GetTurnRadius(car.Intention, car.DangerZoneLength)
-	dirChange := turnAngle * car.Speed * dt * (math.Pi / (2 * radio))
-	*/
-	fmt.Println(startPos, endPos)
-	//fmt.Println((curDistance / initDistance), dirChange, car.ChangedAngle)
-	if car.ChangedAngle < 90 {
+	// Why is it times 3?
+	beautifulVariable := 3 * (turnAngle - car.ChangedAngle) * (1 - (curDistance / initDistance))
+	dirChange := beautifulVariable * dt * car.Speed * (math.Pi / (2 * radio))
+	if car.ChangedAngle < turnAngle {
 		car.ChangedAngle += dirChange
 		if car.Intention == LeftIntention {
 			car.Direction += dirChange
@@ -70,19 +65,26 @@ func (car *Car) ChangeDirection(dt, turnAngle float64) {
 }
 
 func checkTurnCondition(car *Car) bool {
-	if car.Intention != StraightIntention {
-		A, B, C, D := GetDangerZoneCoords(car.DangerZoneLength, car.CoopZoneLength)
-		return IsInsideDangerZone(A, B, C, D, car.Position)
-	}
-	return false
+	A, B, C, D := GetDangerZoneCoords(car.DangerZoneLength, car.CoopZoneLength)
+	return IsInsideDangerZone(A, B, C, D, car.Position)
 }
 
 // TODO
 func (car *Car) Turn(dt, turnAngle float64) {
 	// Check if its in position to turn or not
 	// check intention
-	if checkTurnCondition(car) {
-		fmt.Println("qeeee")
-		car.ChangeDirection(dt, turnAngle)
+	if car.Intention != StraightIntention {
+		if checkTurnCondition(car) {
+			car.ChangeDirection(dt, turnAngle)
+		} else {
+			if 0 < car.ChangedAngle && car.ChangedAngle != turnAngle {
+				car.ChangedAngle = turnAngle
+				if car.Intention == LeftIntention {
+					car.Direction = GetStartDirection(car.Lane) + turnAngle
+				} else {
+					car.Direction = GetStartDirection(car.Lane) - turnAngle
+				}
+			}
+		}
 	}
 }

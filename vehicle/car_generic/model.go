@@ -44,7 +44,7 @@ func CreateCar(lane, intention int, coopZoneLength, dangerZoneLength float64) *C
 	c.Lane = lane
 	c.Direction = GetStartDirection(lane)
 	c.Acceleration = 5
-	c.Speed = 10
+	c.Speed = 200
 	c.CoopZoneLength = coopZoneLength
 	c.DangerZoneLength = dangerZoneLength
 	return &c

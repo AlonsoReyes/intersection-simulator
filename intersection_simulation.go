@@ -66,7 +66,7 @@ func run() {
 	carSprite := pixel.NewSprite(carPic, carPic.Bounds())
 
 	lane := 0
-	intention := v.RightIntention
+	intention := v.LeftIntention
 	coopZoneLength := f.PictureLength
 	dangerZoneLength := f.IntersectionLength
 

@@ -6,6 +6,10 @@ type Pos struct {
 	X, Y float64
 }
 
+func (p *Pos) GetManhattanDistance(v Pos) float64 {
+	return math.Abs(v.X-p.X) + math.Abs(v.Y-p.Y)
+}
+
 func (p *Pos) GetVectorLength(v Pos) float64 {
 	return math.Sqrt(math.Pow(v.X-p.X, 2) + math.Pow(v.Y-p.Y, 2))
 }
