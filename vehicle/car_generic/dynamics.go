@@ -1,6 +1,7 @@
 package car_generic
 
 import (
+	"fmt"
 	m "github.com/AlonsoReyes/intersection-simulator/vehicle"
 	"math"
 )
@@ -46,12 +47,13 @@ func (car *Car) ChangeDirection(dt, turnAngle float64) {
 	curDistance := curPos.GetManhattanDistance(endPos)
 	radio := GetTurnRadius(car.Intention, car.DangerZoneLength)
 	// Why is it times 3?
-	beautifulVariable := 3 * (turnAngle - car.ChangedAngle) * (1 - (curDistance / initDistance))
-	dirChange := beautifulVariable * dt * car.Speed * (math.Pi / (2 * radio))
+	beautifulVariable := (turnAngle - car.ChangedAngle) * (1 - (curDistance / initDistance))
+	dirChange := math.Abs(beautifulVariable * dt * car.Speed * (math.Pi / (2 * radio)))
 	if car.ChangedAngle < turnAngle {
+		//fmt.Println(car.ChangedAngle)
 		car.ChangedAngle += dirChange
 		if car.Intention == LeftIntention {
-			car.Direction += dirChange
+			car.Direction += 2.5 * dirChange
 		} else {
 			car.Direction -= dirChange
 		}
@@ -78,6 +80,7 @@ func (car *Car) Turn(dt, turnAngle float64) {
 			car.ChangeDirection(dt, turnAngle)
 		} else {
 			if 0 < car.ChangedAngle && car.ChangedAngle != turnAngle {
+				fmt.Println("LOOOL")
 				car.ChangedAngle = turnAngle
 				if car.Intention == LeftIntention {
 					car.Direction = GetStartDirection(car.Lane) + turnAngle
@@ -85,6 +88,7 @@ func (car *Car) Turn(dt, turnAngle float64) {
 					car.Direction = GetStartDirection(car.Lane) - turnAngle
 				}
 			}
+			fmt.Println(car.Position)
 		}
 	}
 }
