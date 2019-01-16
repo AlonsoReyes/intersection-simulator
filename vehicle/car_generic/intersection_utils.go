@@ -2,6 +2,7 @@ package car_generic
 
 import (
 	m "github.com/AlonsoReyes/intersection-simulator/vehicle"
+	"math"
 )
 
 func GetTurnAngle() float64 {
@@ -189,4 +190,14 @@ func GetDangerZoneCoords(dangerZoneLength, coopZoneLength float64) (m.Pos, m.Pos
 	D.Y = halfCoopZone - laneWidth
 
 	return A, B, C, D
+}
+
+func GetCenterOfTurn(startPos, endPos m.Pos, car *Car) m.Pos {
+	startDir := GetStartDirection(car.Lane) * math.Pi / 180.0
+	a := math.Abs(math.Cos(startDir))
+	b := math.Abs(math.Sin(startDir))
+	//fmt.Println(a, b, startDir)
+	x := startPos.X*a + endPos.X*b
+	y := startPos.Y*b + endPos.Y*a
+	return m.Pos{X: x, Y: y}
 }

@@ -43,17 +43,14 @@ func (car *Car) ChangeDirection(dt, turnAngle float64) {
 	endPos := GetEndPosition(car.Lane, car.Intention, car.CoopZoneLength, car.DangerZoneLength)
 	curPos := car.GetPosition()
 
-	initDistance := startPos.GetManhattanDistance(endPos)
-	curDistance := curPos.GetManhattanDistance(endPos)
-	radio := GetTurnRadius(car.Intention, car.DangerZoneLength)
-	// Why is it times 3?
-	beautifulVariable := (turnAngle - car.ChangedAngle) * (1 - (curDistance / initDistance))
-	dirChange := math.Abs(beautifulVariable * dt * car.Speed * (math.Pi / (2 * radio)))
+	turnCenterPos := GetCenterOfTurn(startPos, endPos, car)
+	coveredAngle := m.GetInsideAngle(startPos, turnCenterPos, curPos)
+
+	dirChange := math.Abs(coveredAngle - car.ChangedAngle)
 	if car.ChangedAngle < turnAngle {
-		//fmt.Println(car.ChangedAngle)
 		car.ChangedAngle += dirChange
 		if car.Intention == LeftIntention {
-			car.Direction += 2.5 * dirChange
+			car.Direction += dirChange
 		} else {
 			car.Direction -= dirChange
 		}
@@ -88,7 +85,7 @@ func (car *Car) Turn(dt, turnAngle float64) {
 					car.Direction = GetStartDirection(car.Lane) - turnAngle
 				}
 			}
-			fmt.Println(car.Position)
+			//fmt.Println(car.Position)
 		}
 	}
 }

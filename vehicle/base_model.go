@@ -6,6 +6,13 @@ type Pos struct {
 	X, Y float64
 }
 
+// Get angle with x as its center
+func GetInsideAngle(p, x, v Pos) float64 {
+	a := math.Pow(x.GetVectorLength(p), 2) + math.Pow(x.GetVectorLength(v), 2) - math.Pow(p.GetVectorLength(v), 2)
+	b := 2.0 * x.GetVectorLength(p) * x.GetVectorLength(v)
+	return math.Acos(a/b) * 180.0 / math.Pi
+}
+
 func (p *Pos) GetManhattanDistance(v Pos) float64 {
 	return math.Abs(v.X-p.X) + math.Abs(v.Y-p.Y)
 }
