@@ -66,15 +66,11 @@ func run() {
 	carSprite := pixel.NewSprite(carPic, carPic.Bounds())
 
 	lane := 3
-	intention := v.LeftIntention
+	intention := v.RightIntention
 	coopZoneLength := f.PictureLength
 	dangerZoneLength := f.IntersectionLength
 
 	testCar := v.CreateCar(lane, intention, coopZoneLength, dangerZoneLength)
-
-	//testCar.Position.X = 400
-	//testCar.Position.Y = 200
-	//testCar.Speed = 0
 
 	for !win.Closed() {
 		dt = time.Since(last).Seconds()
