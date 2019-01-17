@@ -9,7 +9,6 @@ import (
 	v "github.com/niclabs/intersection-simulator/vehicle/car_generic"
 	"golang.org/x/image/colornames"
 	_ "image/png"
-	"math"
 	_ "math"
 	"time"
 	_ "time"
@@ -66,7 +65,7 @@ func run() {
 	carSprite := pixel.NewSprite(carPic, carPic.Bounds())
 
 	lane := 3
-	intention := v.RightIntention
+	intention := v.LeftIntention
 	coopZoneLength := f.PictureLength
 	dangerZoneLength := f.IntersectionLength
 
@@ -79,14 +78,11 @@ func run() {
 		// Clean Screen
 		win.Clear(colornames.White)
 
-		// Test here
-		//fmt.Println(testCar.Speed)
-		//		fmt.Println(testCar.Direction)
 		testCar.Run(dt)
 
 		mat := pixel.IM
-		mat = mat.ScaledXY(pixel.ZV, pixel.V(0.1, 0.1))
-		mat = mat.Rotated(pixel.ZV, testCar.Direction*math.Pi/180)
+		mat = mat.ScaledXY(pixel.ZV, pixel.V(v.Scaling, v.Scaling))
+		mat = mat.Rotated(pixel.ZV, testCar.GetDirectionInRadians())
 		mat = mat.Moved(pixel.V(testCar.Position.X, testCar.Position.Y))
 
 		// Draw here

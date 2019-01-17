@@ -21,6 +21,10 @@ const (
 
 	// How much the direction must change when turning, this is just for a square fourway
 	FourwayTurnAngle = 90.0
+	Scaling          = 0.1
+
+	// Time passing
+	defaultTimeDelta = 0.002
 )
 
 // Lengths will be used from the config file in the intersection directory

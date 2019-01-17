@@ -9,6 +9,10 @@ func (car *Car) GetPosition() m.Pos {
 	return car.Position
 }
 
+func (car *Car) GetDirectionInRadians() float64 {
+	return car.Direction * math.Pi / 180.0
+}
+
 func (car *Car) Run(dt float64) {
 	turnAngle := GetTurnAngle()
 	car.Accelerate(dt)
