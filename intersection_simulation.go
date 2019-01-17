@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/AlonsoReyes/intersection-simulator/graphic"
-	f "github.com/AlonsoReyes/intersection-simulator/intersection/fourway"
-	v "github.com/AlonsoReyes/intersection-simulator/vehicle/car_generic"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/niclabs/intersection-simulator/graphic"
+	f "github.com/niclabs/intersection-simulator/intersection/fourway"
+	v "github.com/niclabs/intersection-simulator/vehicle/car_generic"
 	"golang.org/x/image/colornames"
 	_ "image/png"
 	"math"
@@ -30,7 +30,7 @@ func createWindow(title string, minX, minY, width, height float64, vsync, smooth
 }
 
 func backgroundSprite(win *pixelgl.Window, image string, width, height float64) (*pixel.Sprite, pixel.Matrix) {
-	background, err := graphic.LoadPicture("src/github.com/AlonsoReyes/intersection-simulator/intersection/fourway/images/" + image)
+	background, err := graphic.LoadPicture("src/github.com/niclabs/intersection-simulator/intersection/fourway/images/" + image)
 	if err != nil {
 		panic(err)
 	}
@@ -58,7 +58,7 @@ func run() {
 	last := time.Now()
 	dt := time.Since(last).Seconds()
 
-	carPic, err := graphic.LoadPicture("src/github.com/AlonsoReyes/intersection-simulator/vehicle/car_generic/images/redcar.png")
+	carPic, err := graphic.LoadPicture("src/github.com/niclabs/intersection-simulator/vehicle/car_generic/images/redcar.png")
 	if err != nil {
 		panic(err)
 	}

@@ -1,7 +1,7 @@
 package car_generic
 
 import (
-	m "github.com/AlonsoReyes/intersection-simulator/vehicle"
+	m "github.com/niclabs/intersection-simulator/vehicle"
 )
 
 const (
@@ -25,7 +25,7 @@ const (
 
 // Lengths will be used from the config file in the intersection directory
 type Car struct {
-	ChangedAngle     float64
+	ChangedAngle     float64 // Keeps track of how much the car has turned
 	Position         m.Pos
 	Intention        int
 	Lane             int

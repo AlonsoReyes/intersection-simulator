@@ -1,8 +1,7 @@
 package car_generic
 
 import (
-	"fmt"
-	m "github.com/AlonsoReyes/intersection-simulator/vehicle"
+	m "github.com/niclabs/intersection-simulator/vehicle"
 	"math"
 )
 
@@ -36,7 +35,9 @@ func (car *Car) Accelerate(dt float64) {
 	car.Speed = newSpeed
 }
 
-// Changes the direction toward a 90 degree turn towards the corresponding direction of the intention
+/*
+Changes the direction toward a 90 degree turn so it heads to the corresponding exit lane
+*/
 func (car *Car) ChangeDirection(dt, turnAngle float64) {
 	// See the proportion between the covered distance and the initial distance until entering and exiting the danger zone
 	startPos := GetEnterPosition(car.Lane, car.CoopZoneLength, car.DangerZoneLength)
@@ -55,7 +56,7 @@ func (car *Car) ChangeDirection(dt, turnAngle float64) {
 			car.Direction -= dirChange
 		}
 	}
-	// TODO check case when direction ends up negative a < destination < b (caso en que mi lane final es la de abajo)
+
 	if car.Direction < 0 {
 		car.Direction = 360 + car.Direction
 	} else {
@@ -63,21 +64,24 @@ func (car *Car) ChangeDirection(dt, turnAngle float64) {
 	}
 }
 
+/*
+Checks if the car is inside the intersection. Possible collision zone.
+*/
 func checkTurnCondition(car *Car) bool {
 	A, B, C, D := GetDangerZoneCoords(car.DangerZoneLength, car.CoopZoneLength)
 	return IsInsideDangerZone(A, B, C, D, car.Position)
 }
 
-// TODO
+/*
+Checks if the car needs to turn depending of what amount of the turnAngle it has covered.
+In a four-way intersection this angle is 90 degrees.
+*/
 func (car *Car) Turn(dt, turnAngle float64) {
-	// Check if its in position to turn or not
-	// check intention
 	if car.Intention != StraightIntention {
 		if checkTurnCondition(car) {
 			car.ChangeDirection(dt, turnAngle)
 		} else {
 			if 0 < car.ChangedAngle && car.ChangedAngle != turnAngle {
-				fmt.Println("LOOOL")
 				car.ChangedAngle = turnAngle
 				if car.Intention == LeftIntention {
 					car.Direction = GetStartDirection(car.Lane) + turnAngle
@@ -85,7 +89,6 @@ func (car *Car) Turn(dt, turnAngle float64) {
 					car.Direction = GetStartDirection(car.Lane) - turnAngle
 				}
 			}
-			//fmt.Println(car.Position)
 		}
 	}
 }

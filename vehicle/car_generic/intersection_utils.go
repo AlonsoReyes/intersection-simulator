@@ -1,7 +1,7 @@
 package car_generic
 
 import (
-	m "github.com/AlonsoReyes/intersection-simulator/vehicle"
+	m "github.com/niclabs/intersection-simulator/vehicle"
 	"math"
 )
 
@@ -62,6 +62,9 @@ func GetStartPosition(lane int, coopZoneLength, dangerZoneLength float64) m.Pos 
 	return res
 }
 
+/*
+Returns the coordinates of where the car enters the inner intersection.
+*/
 func GetEnterPosition(lane int, coopZoneLength, dangerZoneLength float64) m.Pos {
 	var x, y float64
 	laneWidth := dangerZoneLength / 2.0
@@ -87,8 +90,9 @@ func GetEnterPosition(lane int, coopZoneLength, dangerZoneLength float64) m.Pos 
 	return res
 }
 
-// TODO FIX
-
+/*
+Returns the coordinates of where the car exits the inner intersection.
+*/
 func GetEndPosition(lane, intention int, coopZoneLength, dangerZoneLength float64) m.Pos {
 	var x, y float64
 	laneWidth := dangerZoneLength / 2.0
@@ -107,7 +111,7 @@ func GetEndPosition(lane, intention int, coopZoneLength, dangerZoneLength float6
 	case TopLane:
 		if intention == LeftIntention {
 			x = (coopZoneLength + dangerZoneLength) / 2.0
-			y = (coopZoneLength - dangerZoneLength) / 2.0
+			y = (coopZoneLength - laneWidth) / 2.0
 		} else if intention == RightIntention {
 			x = (coopZoneLength - dangerZoneLength) / 2.0
 			y = (coopZoneLength + laneWidth) / 2.0
@@ -124,7 +128,7 @@ func GetEndPosition(lane, intention int, coopZoneLength, dangerZoneLength float6
 			y = (coopZoneLength - dangerZoneLength) / 2.0
 		} else {
 			x = (coopZoneLength + dangerZoneLength) / 2.0
-			y = (coopZoneLength - dangerZoneLength) / 2.0
+			y = (coopZoneLength - laneWidth) / 2.0
 		}
 	case RightLane:
 		if intention == LeftIntention {
@@ -138,8 +142,8 @@ func GetEndPosition(lane, intention int, coopZoneLength, dangerZoneLength float6
 			y = (coopZoneLength + laneWidth) / 2.0
 		}
 	default:
-		x = 0.0
-		y = 0.0
+		x = (coopZoneLength - dangerZoneLength) / 2.0
+		y = (coopZoneLength + laneWidth) / 2.0
 	}
 	res := m.Pos{X: x, Y: y}
 
@@ -192,11 +196,13 @@ func GetDangerZoneCoords(dangerZoneLength, coopZoneLength float64) (m.Pos, m.Pos
 	return A, B, C, D
 }
 
+/*
+Returns the center of the circumference that represents the turn trajectory.
+*/
 func GetCenterOfTurn(startPos, endPos m.Pos, car *Car) m.Pos {
 	startDir := GetStartDirection(car.Lane) * math.Pi / 180.0
 	a := math.Abs(math.Cos(startDir))
 	b := math.Abs(math.Sin(startDir))
-	//fmt.Println(a, b, startDir)
 	x := startPos.X*a + endPos.X*b
 	y := startPos.Y*b + endPos.Y*a
 	return m.Pos{X: x, Y: y}
