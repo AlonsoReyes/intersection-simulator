@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/AlonsoReyes/intersection-simulator/graphic"
-	f "github.com/AlonsoReyes/intersection-simulator/intersection/fourway"
-	v "github.com/AlonsoReyes/intersection-simulator/vehicle/car_generic"
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/niclabs/intersection-simulator/graphic"
+	f "github.com/niclabs/intersection-simulator/intersection/fourway"
+	v "github.com/niclabs/intersection-simulator/vehicle/car_generic"
 	"golang.org/x/image/colornames"
 	_ "image/png"
-	"math"
 	_ "math"
 	"time"
 	_ "time"
@@ -17,9 +16,9 @@ import (
 
 func createWindow(title string, minX, minY, width, height float64, vsync, smooth bool) *pixelgl.Window {
 	cfg := pixelgl.WindowConfig{
-		Title: title,
-		Bounds: pixel.R(minX,minY, width, height),
-		VSync: vsync,
+		Title:  title,
+		Bounds: pixel.R(minX, minY, width, height),
+		VSync:  vsync,
 	}
 	win, err := pixelgl.NewWindow(cfg)
 	if err != nil {
@@ -30,7 +29,7 @@ func createWindow(title string, minX, minY, width, height float64, vsync, smooth
 }
 
 func backgroundSprite(win *pixelgl.Window, image string, width, height float64) (*pixel.Sprite, pixel.Matrix) {
-	background, err := graphic.LoadPicture("github.com/AlonsoReyes/intersection-simulator/intersection/fourway/images/" + image)
+	background, err := graphic.LoadPicture("src/github.com/niclabs/intersection-simulator/intersection/fourway/images/" + image)
 	if err != nil {
 		panic(err)
 	}
@@ -39,16 +38,16 @@ func backgroundSprite(win *pixelgl.Window, image string, width, height float64) 
 
 	bgWidth, bgHeight := graphic.SpriteSize(bgSprite)
 	bgMat := pixel.IM
-	bgMat = bgMat.ScaledXY(pixel.ZV, pixel.V(width / bgWidth, height / bgHeight))
+	bgMat = bgMat.ScaledXY(pixel.ZV, pixel.V(width/bgWidth, height/bgHeight))
 	bgMat = bgMat.Moved(win.Bounds().Center())
 	return bgSprite, bgMat
 }
 
 func run() {
-	win := createWindow("Car-Sim", 0,0, f.PictureLength, f.PictureLength, false, true)
+	win := createWindow("Car-Sim", 0, 0, f.PictureLength, f.PictureLength, false, true)
 
 	// Get background image, simplifies code
-	bgSprite, bgMat := backgroundSprite(win, "inter.png", f.PictureLength, f.PictureLength )
+	bgSprite, bgMat := backgroundSprite(win, "inter.png", f.PictureLength, f.PictureLength)
 
 	var (
 		frames = 0
@@ -58,21 +57,19 @@ func run() {
 	last := time.Now()
 	dt := time.Since(last).Seconds()
 
-
-	carPic, err := graphic.LoadPicture("github.com/AlonsoReyes/intersection-simulator/vehicle/car_generic/images/redcar.png")
+	carPic, err := graphic.LoadPicture("src/github.com/niclabs/intersection-simulator/vehicle/car_generic/images/redcar.png")
 	if err != nil {
 		panic(err)
 	}
 
 	carSprite := pixel.NewSprite(carPic, carPic.Bounds())
 
-	lane := 0
-	intention := 1
+	lane := 3
+	intention := v.LeftIntention
 	coopZoneLength := f.PictureLength
 	dangerZoneLength := f.IntersectionLength
 
 	testCar := v.CreateCar(lane, intention, coopZoneLength, dangerZoneLength)
-
 
 	for !win.Closed() {
 		dt = time.Since(last).Seconds()
@@ -81,14 +78,11 @@ func run() {
 		// Clean Screen
 		win.Clear(colornames.White)
 
-		// Test here
-		//fmt.Println(testCar.Position)
-//		fmt.Println(testCar.Direction)
 		testCar.Run(dt)
 
 		mat := pixel.IM
-		mat = mat.ScaledXY(pixel.ZV, pixel.V(0.1, 0.1))
-		mat = mat.Rotated(pixel.ZV, testCar.Direction * math.Pi / 180)
+		mat = mat.ScaledXY(pixel.ZV, pixel.V(v.Scaling, v.Scaling))
+		mat = mat.Rotated(pixel.ZV, testCar.GetDirectionInRadians())
 		mat = mat.Moved(pixel.V(testCar.Position.X, testCar.Position.Y))
 
 		// Draw here

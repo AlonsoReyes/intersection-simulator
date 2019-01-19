@@ -1,13 +1,16 @@
 package car_generic
 
 import (
-	m "github.com/AlonsoReyes/intersection-simulator/vehicle"
+	m "github.com/niclabs/intersection-simulator/vehicle"
 	"math"
 )
 
-
 func (car *Car) GetPosition() m.Pos {
 	return car.Position
+}
+
+func (car *Car) GetDirectionInRadians() float64 {
+	return car.Direction * math.Pi / 180.0
 }
 
 func (car *Car) Run(dt float64) {
@@ -36,16 +39,28 @@ func (car *Car) Accelerate(dt float64) {
 	car.Speed = newSpeed
 }
 
-// Changes the direction toward a 90 degree turn towards the corresponding direction of the intention
+/*
+Changes the direction toward a 90 degree turn so it heads to the corresponding exit lane
+*/
 func (car *Car) ChangeDirection(dt, turnAngle float64) {
-	radio := GetTurnRadius(car.Intention, car.DangerZoneLength)
-	dirChange := turnAngle * car.Speed * dt * (math.Pi / 2 * radio)
-	if car.Intention == LeftIntention {
-		car.Direction += dirChange
-	} else {
-		car.Direction -= dirChange
+	// See the proportion between the covered distance and the initial distance until entering and exiting the danger zone
+	startPos := GetEnterPosition(car.Lane, car.CoopZoneLength, car.DangerZoneLength)
+	endPos := GetEndPosition(car.Lane, car.Intention, car.CoopZoneLength, car.DangerZoneLength)
+	curPos := car.GetPosition()
+
+	turnCenterPos := GetCenterOfTurn(startPos, endPos, car)
+	coveredAngle := m.GetInsideAngle(startPos, turnCenterPos, curPos)
+
+	dirChange := math.Abs(coveredAngle - car.ChangedAngle)
+	if car.ChangedAngle < turnAngle {
+		car.ChangedAngle += dirChange
+		if car.Intention == LeftIntention {
+			car.Direction += dirChange
+		} else {
+			car.Direction -= dirChange
+		}
 	}
-	// TODO check case when direction ends up negative a < destination < b (caso en que mi lane final es la de abajo)
+
 	if car.Direction < 0 {
 		car.Direction = 360 + car.Direction
 	} else {
@@ -53,21 +68,31 @@ func (car *Car) ChangeDirection(dt, turnAngle float64) {
 	}
 }
 
+/*
+Checks if the car is inside the intersection. Possible collision zone.
+*/
 func checkTurnCondition(car *Car) bool {
-	if car.Intention != StraightIntention {
-		A, B, C, D := GetDangerZoneCoords(car.DangerZoneLength, car.CoopZoneLength)
-		return IsInsideDangerZone(A, B, C, D, car.Position)
-	}
-	return false
+	A, B, C, D := GetDangerZoneCoords(car.DangerZoneLength, car.CoopZoneLength)
+	return IsInsideDangerZone(A, B, C, D, car.Position)
 }
 
-
-// TODO
-func (car *Car) Turn(dt, turnAngle  float64) {
-	// Check if its in position to turn or not
-	// check intention
-	if checkTurnCondition(car) {
-		//fmt.Println("qeeee")
-		car.ChangeDirection(dt, turnAngle)
+/*
+Checks if the car needs to turn depending of what amount of the turnAngle it has covered.
+In a four-way intersection this angle is 90 degrees.
+*/
+func (car *Car) Turn(dt, turnAngle float64) {
+	if car.Intention != StraightIntention {
+		if checkTurnCondition(car) {
+			car.ChangeDirection(dt, turnAngle)
+		} else {
+			if 0 < car.ChangedAngle && car.ChangedAngle != turnAngle {
+				car.ChangedAngle = turnAngle
+				if car.Intention == LeftIntention {
+					car.Direction = GetStartDirection(car.Lane) + turnAngle
+				} else {
+					car.Direction = GetStartDirection(car.Lane) - turnAngle
+				}
+			}
+		}
 	}
 }
